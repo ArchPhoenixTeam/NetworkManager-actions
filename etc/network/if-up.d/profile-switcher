@@ -1,4 +1,9 @@
 #!/bin/bash -e
+# Contributors:
+# ArchPhoenix Team 2021
+# Requirements:
+# NetworkManager
+# nm system profils ready to use
 
 logger "Breakpoint 1, $DEVICE_IFACE for $0"
 if [ -z "$DEVICE_IFACE" ]; then
