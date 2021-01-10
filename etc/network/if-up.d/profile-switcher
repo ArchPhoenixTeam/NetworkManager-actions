@@ -28,7 +28,7 @@ case "$DEVICE_IFACE_TARGET_IP4_DOMAIN" in
         DEVICE_IFACE_TARGET_IP4_ADDRESS=$(nmcli -t -m t -f IP4.ADDRESS device show $DEVICE_IFACE_TARGET)
         if [ "$DEVICE_IFACE_TARGET_IP4_ADDRESS_EXPECTED" == "$DEVICE_IFACE_TARGET_IP4_ADDRESS" ] 
             then
-                [ "$DEVICE_IFACE_PROFILE_CURRENT" == "Trusted:$DEVICE_IFACE_TARGET" ] || exit 0
+                [ "$DEVICE_IFACE_PROFILE_CURRENT" == "Trusted:$DEVICE_IFACE_TARGET" ] && exit 0
                 nmcli c up Trusted
                 logger "Breakpoint 4aa for $0"
                 exit 0
@@ -42,17 +42,17 @@ case "$DEVICE_IFACE_TARGET_IP4_DOMAIN" in
         fi
         ;;
     trusted2)
-        [ "$DEVICE_IFACE_PROFILE_CURRENT" == "Trusted:$DEVICE_IFACE_TARGET" ] || exit 0    
+        [ "$DEVICE_IFACE_PROFILE_CURRENT" == "Trusted:$DEVICE_IFACE_TARGET" ] && exit 0    
         nmcli c up Trusted
         exit 0
         ;;
     home1)
-        [ "$DEVICE_IFACE_PROFILE_CURRENT" == "Home:$DEVICE_IFACE_TARGET" ] || exit 0
+        [ "$DEVICE_IFACE_PROFILE_CURRENT" == "Home:$DEVICE_IFACE_TARGET" ] && exit 0
         nmcli c up Home
         exit 0
        ;;
     *)
-        [ "$DEVICE_IFACE_PROFILE_CURRENT" == "Public:$DEVICE_IFACE_TARGET" ] || exit 0
+        [ "$DEVICE_IFACE_PROFILE_CURRENT" == "Public:$DEVICE_IFACE_TARGET" ] && exit 0
         nmcli c up Public
         logger "Breakpoint 4b for $0"
         exit 0
