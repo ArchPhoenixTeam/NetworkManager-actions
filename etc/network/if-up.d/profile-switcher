@@ -12,6 +12,7 @@ if [ -z "$DEVICE_IFACE" ]; then
 fi
 logger "Breakpoint 2 for $0"
 DEVICE_IFACE_TARGET="enp0s25"
+DEVICE_IFACE_PROFILE_CURRENT="nmcli -t -m t -f NAME,DEVICE c show --active"
 ERR_SPOOF_DOMAIN_MSG="The network you are connected to tries to make itself look like a different network than what it is, you should not trust this network"
 ERR_SPOOF_DOMAIN="ERR_SPOOF_DOMAIN on network interface $DEVICE_IFACE address $DEVICE_IFACE_TARGET_IP4_ADDRESS supposed domain $DEVICE_IFACE_TARGET_IP4_DOMAIN"
 
