@@ -1,0 +1,51 @@
+#!/bin/bash -e
+
+logger "Breakpoint 1, $DEVICE_IFACE for $0"
+if [ -z "$DEVICE_IFACE" ]; then
+    echo "$0: called with no interface" 1>&2
+    exit 1;
+fi
+logger "Breakpoint 2 for $0"
+DEVICE_IFACE_TARGET="enp0s25"
+ERR_SPOOF_DOMAIN_MSG="The network you are connected to tries to make itself look like a different network than what it is, you should not trust this network"
+ERR_SPOOF_DOMAIN="ERR_SPOOF_DOMAIN on network interface $DEVICE_IFACE address $DEVICE_IFACE_TARGET_IP4_ADDRESS supposed domain $DEVICE_IFACE_TARGET_IP4_DOMAIN"
+
+[ "$DEVICE_IFACE" != "$DEVICE_IFACE_TARGET" ] && exit 0
+
+logger "Breakpoint 3 for $0"
+DEVICE_IFACE_TARGET_IP4_DOMAIN=$(nmcli -t -m t -f IP4.DOMAIN device show $DEVICE_IFACE_TARGET)
+
+case "$DEVICE_IFACE_TARGET_IP4_DOMAIN" in
+    trusted1)
+        logger "Breakpoint 4a for $0"
+        DEVICE_IFACE_TARGET_IP4_ADDRESS_EXPECTED="IP/CIDR"
+        DEVICE_IFACE_TARGET_IP4_ADDRESS=$(nmcli -t -m t -f IP4.ADDRESS device show $DEVICE_IFACE_TARGET)
+        if [ "$DEVICE_IFACE_TARGET_IP4_ADDRESS_EXPECTED" == "$DEVICE_IFACE_TARGET_IP4_ADDRESS" ] 
+            then
+                [ "$DEVICE_IFACE_PROFILE_CURRENT" == "Trusted:$DEVICE_IFACE_TARGET" ] || exit 0
+                nmcli c up Trusted
+                logger "Breakpoint 4aa for $0"
+                exit 0
+            else
+                logger "Breakpoint 4ab for $0"
+                nmcli c up Untrusted
+                echo "$ERR_SPOOF_DOMAIN" 1>&2
+                logger "$ERR_SPOOF_DOMAIN_MSG"
+                logger "$(eval $ERR_SPOOF_DOMAIN)"
+                exit 0
+        fi
+        ;;
+    trusted2)
+        nmcli c up Trusted
+        exit 0
+        ;;
+    home1)
+        nmcli c up Home
+        exit 0
+       ;;
+    *)
+        nmcli c up Public
+        logger "Breakpoint 4b for $0"
+        exit 0
+        ;;
+esac
